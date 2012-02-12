@@ -1,2 +1,6 @@
 Matteo DOT Redaelli AT gmail DOT com
 http://www.redaelli.org/matteo/
+
+Code and suggestions from http://www.inside-r.org/howto/mining-twitter-airline-consumer-sentiment
+
+Hu and Liu’s “opinion lexicon” categorizes nearly 6,800 words as positive or negative and were downloaded from Bing Liu’s web site: http://www.cs.uic.edu/~liub/FBS/opinion-lexicon-English.rar
