@@ -1,0 +1,57 @@
+  <%
+     setContentType("text/html")
+     ##RApacheOutputErrors(TRUE)
+     options(hverbose=FALSE,verbose=FALSE)
+     library(digest)
+  %>
+
+<html>
+<head>
+<title>Twitter Sentiments</title>
+</head>
+<html>
+<body>
+<img src=https://si0.twimg.com/a/1328637852/images/logos/logo_twitter_withbird_1000_allblue.png />
+<h1>Twitter sentiments</h1>
+This is an experimental Sentimental Analisys over tweets...
+<%
+  if( !is.null(GET$words)) {
+      GET$words < URLdecode(GET$words)
+  }
+%>  
+
+<form method="GET">
+ Words (space separated, like continental dunlop pirelli michelin goodyear bridgestone)<br /><input type="text" name="words" value="" size=50 /><br />
+ Your email <input type="text" name="mailto" value="<%=GET$mailto%>"/>
+ <input type="submit" />
+</form>
+
+<%
+ if (!is.null(GET$mailto) && !is.null(GET$words)) {
+  GET$mailto <- ifelse(is.null(GET$mailto), "noreply@pirelli.com", GET$mailto)
+id <- digest(format(Sys.time(), "%c"))
+
+command <- "/home/r/twitter-sentiments/twitter-sentiments.R /var/www/twitter-sentiments/output/__ID__ __WORDS__"
+
+slurm.command <- "PATH=/apps/R/bin:$PATH sudo -u r -i /apps/slurm/bin/sbatch --workdir=/var/www/slurm --mail-type=ALL --mail-user=__MAILTO__ --job-name=__ID__ __COMMAND__"
+
+cmd <- gsub("__COMMAND__", command, slurm.command)
+cmd <- gsub("__MAILTO__", GET$mailto, cmd)
+cmd <- gsub("__ID__", id, cmd)
+cmd <- gsub("__WORDS__", GET$words, cmd)
+
+##cat(cmd)
+system(cmd, wait=TRUE, intern=TRUE)
+
+%>
+
+<p>
+  The generation of charts can take several minutes...<br />
+  Result pictures will be placed <a href=output/<%=id%>/ >here</a>
+</p>
+<%}
+%>
+<hr />
+Powered by <a href="www.r-project.org">R</a>
+</body>
+</html>
